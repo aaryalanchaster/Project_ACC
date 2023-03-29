@@ -3,200 +3,149 @@ package tasks;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-
-// @Author Dhrumil
+/**
+ * @Author Dhrumil Limbad (110097066)
+ * 
+ *         Working of the code:
+ *         The InvertedIndex class has two instance variables: index and
+ *         fileSet.
+ *         index is a Map that maintains the mapping between terms and the set
+ *         of files that contain the term.
+ *         fileSet is a Set that maintains the set of files that have been
+ *         indexed.
+ * 
+ *         The InvertedIndex constructor initializes the index and fileSet
+ *         instance variables.
+ * 
+ *         The indexFiles method takes a folder path as input, reads all the
+ *         files in the folder
+ *         (that have .html or .htm extensions), and indexes them using the
+ *         indexFile method.
+ *         The indexFile method reads the contents of each file, tokenizes the
+ *         contents into individual words,
+ *         and adds the file name to the set of files associated with each word
+ *         in the index map.
+ * 
+ *         The generateInvertedIndex method takes a set of keywords as input,
+ *         builds an
+ *         inverted index of the files in the specified folder, and returns a
+ *         set of files that contain the specified keywords.
+ *         It first initializes a new InvertedIndex instance and indexes the
+ *         files in the specified folder using the indexFiles method.
+ *         It then iterates over each keyword in the input set and retrieves the
+ *         set of files associated
+ *         with that keyword from the index map. For each file in the retrieved
+ *         set, it creates a File object and adds it to the result set.
+ * 
+ *         The main method is a simple example of how to use the
+ *         generateInvertedIndex method.
+ *         It creates a set of two keywords ("diet" and "fitness"), calls
+ *         generateInvertedIndex with these keywords,
+ *         and prints the absolute path of each file that contains at least one
+ *         of the keywords.
+ * 
+ *         Overall, the code efficiently builds an inverted index from a set of
+ *         text
+ *         documents and provides a simple method for searching the index to
+ *         retrieve the files that contain specified keywords.
+ */
 
 public class InvertedIndex {
-    // A TrieNode represents a node in the trie
-    static class Node {
-        // Maps each character to the child node
-        public Map<Character, Node> child;
-        // The number of times this node has been visited during insertion
-        public int count;
-        // A set of filenames where this word occurs
-        public Set<String> files;
 
-        public Node() {
-            this.child = new HashMap<>();
-            this.count = 0;
-            this.files = new HashSet<>();
-        }
-
-        // Adds the given filename to the set of filenames where this word occurs
-        public void addFile(String filename) {
-            files.add(filename);
-        }
-
-        // Returns a list of filenames where this word occurs
-        public List<String> getFiles() {
-            return new ArrayList<String>(files);
-        }
-    }
-
-    // The root node of the trie
-    private Node root;
+    private int page = 1;
+    // Define a static map to store the index for each word
+    private static Map<String, Set<String>> index;
+    // Define a set to store all the files in the folder
+    private Set<File> fileSet;
 
     public InvertedIndex() {
-        this.root = new Node();
+        index = new HashMap<>();
+        fileSet = new HashSet<>();
     }
 
-    // Adds the given word and filename to the trie
-    public void add(String word, String filename) {
-        word = word.toLowerCase();
-        Node current = root;
-        current.count++;
-        for (int i = 0; i < word.length(); i++) {
-            // gets the word at position i
-            char c = word.charAt(i);
-            // checks whether the c exist or not
-            if (!current.child.containsKey(c)) {
-                current.child.put(c, new Node());
-            }
-            current = current.child.get(c);
-            current.count++;
-        }
-        // adds the file name
-        current.addFile(filename);
-    }
-
-    // Returns a list of filenames where the given word occurs
-    public List<String> search(String word) {
-        word = word.toLowerCase();
-        Node curr = root;
-        for (int i = 0; i < word.length(); i++) {
-            char c = word.charAt(i);
-            if (!curr.child.containsKey(c)) {
-                // Return an empty list if the word is not found in the trie
-                return Collections.emptyList();
-            }
-            curr = curr.child.get(c);
-        }
-        // gets the files
-        return curr.getFiles();
-    }
-
-    // Returns the number of times the given word occurs in the trie
-    public int count(String word) {
-        word = word.toLowerCase();
-        Node curr = root;
-        for (int i = 0; i < word.length(); i++) {
-            char c = word.charAt(i);
-            if (!curr.child.containsKey(c)) {
-                return 0;
-            }
-            curr = curr.child.get(c);
-        }
-        // gets the count of the word
-        return curr.count;
-    }
-
-    // Prints the list of filenames where each keyword occurs
-    public void print(String[] keywords) {
-        for (String word : keywords) {
-            List<String> files = search(word);
-            System.out.println(word + " - " + "found in " + files.size() + " files");
-            for (String file : files) {
-                // prints the list of files which have the keyword
-                System.out.println("\t" + file);
+    // Method to index all the files in the folder path
+    public void indexFiles(String folderPath) {
+        // Create a file object for the folder path
+        File folder = new File(folderPath);
+        // Get all the files in the folder
+        File[] files = folder.listFiles();
+        for (File file : files) {
+            if (file.isFile() && (file.getName().endsWith(".html") || file.getName().endsWith(".htm"))) {
+                indexFile(file);
             }
         }
     }
 
-    /**
-     * 
-     * @param file
-     * @return void
-     * @description Method to convert html file to txt file
-     */
-    public static void getfiles(File file) {
+    // Method to index a single file
+    private void indexFile(File file) {
+        // System.out.println(page++ + " " + file.getName());
         try {
-            // gets the file name
-            String fileName = file.getName();
-            // gets the file extension
-            String fileExtension = fileName.substring(fileName.lastIndexOf('.') + 1);
-            if (!fileExtension.equalsIgnoreCase("htm") && !fileExtension.equalsIgnoreCase("html")) {
-                return;
+            FileReader reader = new FileReader(file);
+            BufferedReader bufferedReader = new BufferedReader(reader);
+            String line;
+            // Read each line of the file
+            while ((line = bufferedReader.readLine()) != null) {
+                // Iterate through each word
+                String[] words = line.split("\\W+");
+                for (String word : words) {
+                    // Check if the word has length greater than 0
+                    if (word.length() > 0) {
+                        // Get the set of files for the current word, or create a new set if it doesn't
+                        // exist
+                        Set<String> files = index.getOrDefault(word, new HashSet<>());
+                        // Add the current file to the set of files for the current word
+                        files.add(file.getAbsolutePath());
+                        // Put the set of files for the current word into the map
+                        index.put(word, files);
+                    }
+                }
             }
-            String txtFileName = fileName.substring(0, fileName.lastIndexOf('.')) + ".txt";
-
-            File txtFile = new File(file.getParentFile(), txtFileName);
-            Document doc;
-            doc = Jsoup.parse(file, "UTF-8");
-            FileWriter writer = new FileWriter(txtFile);
-
-            writer.write(doc.text());
-            // closing the file writer
-            writer.close();
-            // Print a success message after the file is converted to txt format
-            // System.out.println("Successfully converted " + fileName + " to " +
-            // txtFileName);
+            fileSet.add(file);
+            bufferedReader.close();
+            reader.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    /**
-     * 
-     * @param path
-     * @return void
-     * @description Method to get all the html files in a folder and convert them to
-     *              txt files
-     */
-    public static void getfilesfromfolder(File path) {
-        // takes all the files and adds them in the files array
-        File[] files = path.listFiles();
-        // traverses through all the files and calls getfiles method
-        for (File file : files) {
-            getfiles(file);
-        }
-    }
-
-    public static void main(String[] args) throws Exception {
-        // Directory containing the files to be indexed
-        File htmlFile = new File("C:\\\\Users\\\\johna\\\\Downloads\\\\Webpages_project\\\\Webpages_project");
-        // Convert all html files in the directory to txt format
-        getfilesfromfolder(htmlFile);
-        // Set the path of the folder containing the txt files to be indexed
-        String folderPath = "C:\\\\Users\\\\johna\\\\Downloads\\\\Webpages_project\\\\Webpages_project";
-        // Set the keywords to be searched for in the indexed files
-        String[] keywords = { "fitness" };
-
-        // Create an object of the InvertedIndex class
+    // Method to generate the inverted index for the given set of keywords
+    public static Set<File> generateInvertedIndex(Set<String> keywords) {
         InvertedIndex invertedIndex = new InvertedIndex();
-
-        // Get all the txt files in the folder to be indexed
-        File folder = new File(folderPath);
-        // takes all the files and adds them in the files array
-        File[] files = folder.listFiles();
-
-        // For each file, read its content and add each word to the inverted index along
-        // with the filename
-        for (File file : files) {
-            // checks where the file ends with "txt" extension
-            if (file.isFile() && file.getName().endsWith(".txt")) {
-                BufferedReader reader = new BufferedReader(new FileReader(file));
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    // (\\W) stands for "word character"
-                    // (+) means that all this together can be repeated at least once
-                    String[] words = line.split("\\W+");
-                    for (String word : words) {
-                        // adds the word and the file name in the inverted index
-                        invertedIndex.add(word, file.getName());
-                    }
+        // String folderPath = "C:\\Users\\ASUS\\Downloads\\webpages\\Webpages_project";
+        String folderPath = "C:\\Java\\Project_ACC\\Webpages_project\\Webpages_project\\";
+        // Index all the files in the folder
+        invertedIndex.indexFiles(folderPath);
+        // Create a new set to store the files containing the keywords
+        Set<File> result = new HashSet<>();
+        // Iterate through each keyword
+        for (String keyword : keywords) {
+            // Get the set of files containing the current keyword
+            Set<String> files = index.get(keyword);
+            if (files != null) {
+                // Iterate through each file in the set of files containing the current keyword
+                for (String fileName : files) {
+                    // Create a file object for the current file and add it to the set of files
+                    // containing the keywords
+                    File file = new File(fileName);
+                    result.add(file);
                 }
-                // closing the buffered reader
-                reader.close();
             }
         }
-
-        // Print the filenames where the keywords are found
-        invertedIndex.print(keywords);
+        return result;
     }
+
+    public static void main(String[] args) {
+        Set<String> keywords = new HashSet<>();
+        keywords.add("diet");
+        keywords.add("fitness");
+        Set<File> result = generateInvertedIndex(keywords);
+        System.out.println("Files containing the keywords: " + keywords);
+        for (File file : result) {
+            System.out.println(file.getAbsolutePath());
+        }
+    }
+
 }

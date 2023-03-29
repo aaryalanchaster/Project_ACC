@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 import org.jsoup.Jsoup;
@@ -15,7 +17,8 @@ import org.jsoup.nodes.Document;
 public class Parser {
 	private static final String htmlFilesDirectory = "C:\\Users\\Mauli\\ACC Project\\Project_ACC\\Webpages_project\\Webpages_project";
 	private static final String textFilesDirectory = "C:\\Users\\Mauli\\ACC Project\\Project_ACC\\Text";
-	final static ArrayList<String> filterWords = new ArrayList<>(Arrays.asList("THE", "FOR", "AND", "HAS", "THAT",
+	final static ArrayList<String> filterWords = new ArrayList<>(Arrays.asList("THE", "FOR", "AND", "HAS", "THAT", "IN",
+			"A", "AN", "HE", "SHE", "IT", "HAVE", "COULD", "WOULD",
 			"THIS", "ARE", "WHICH", "HOW", "CAN", "THEN", "THAN", "WHEN", "ITS", "FROM", "WITH", "WILL", "NOT"));
 
 	/**
@@ -128,7 +131,6 @@ public class Parser {
 				}
 
 				catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 
 				}
@@ -188,7 +190,6 @@ public class Parser {
 				}
 
 				catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 
 				}
@@ -196,6 +197,15 @@ public class Parser {
 		}
 		return arr;
 
+	}
+
+	public static Set<String> filterStopWords(String query) {
+		String[] words = query.split(" ");
+		Set<String> keywords = new HashSet<String>();
+		for (String word : words)
+			if (!filterWords.contains(word.toUpperCase()))
+				keywords.add(word);
+		return keywords;
 	}
 
 	public static void main(String[] args) {

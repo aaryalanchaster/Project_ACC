@@ -1,82 +1,134 @@
-package Task;
+package tasks;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class SpellChecker {
-    // A TrieNode represents a node in the Trie
-    static class TrieNode {
-        public Map<Character, TrieNode> child;
+    // The root node of the trie
+    private Node root;
+
+    // The maximum edit distance to be considered
+    private final int MAX_DISTANCE = 2;
+
+    // A TrieNode represents a node in the trie
+    private static class Node {
+        // Maps each character to the child node
+        public Map<Character, Node> child;
+        // Indicates whether this node is the end of a word
         public boolean isWord;
 
-        public TrieNode() {
+        public Node() {
             this.child = new HashMap<>();
             this.isWord = false;
         }
     }
 
-    private TrieNode root;
-
     public SpellChecker() {
-        this.root = new TrieNode();
+        this.root = new Node();
     }
 
-    // Adds a word to the Trie
+    // Adds a word to the trie
     public void addWord(String word) {
-        TrieNode current = root;
+        word = word.toLowerCase();
+        Node current = root;
         for (int i = 0; i < word.length(); i++) {
             char c = word.charAt(i);
             if (!current.child.containsKey(c)) {
-                current.child.put(c, new TrieNode());
+                current.child.put(c, new Node());
             }
             current = current.child.get(c);
         }
         current.isWord = true;
     }
 
-    // Checks if a word is spelled correctly
-    public boolean checkSpelling(String word) {
-        word = word.toLowerCase();
-        TrieNode current = root;
-        for (int i = 0; i < word.length(); i++) {
-            char c = word.charAt(i);
-            if (!current.child.containsKey(c)) {
-                // Check if the word can be corrected with a single edit
-                return checkSingleEdit(word.substring(0, i) + word.substring(i + 1)) ||
-                        checkSingleEdit(word.substring(0, i) + c + word.substring(i + 1)) ||
-                        checkSingleEdit(word.substring(0, i + 1) + word.substring(i + 2));
-            }
-            current = current.child.get(c);
+    // Returns a list of suggestions for the given word
+    public List<String> suggest(String word) {
+        List<String> suggestions = new ArrayList<>();
+        Set<String> suggestedWords = new HashSet<>(); // to keep track of suggested words
+        // Check if the word is already in the trie
+        if (search(root, word)) {
+            return suggestions;
         }
-        return current.isWord;
+        search(root, word, suggestions, "", 0, suggestedWords);
+        return suggestions;
     }
 
-    // Checks if a word can be corrected with a single edit
-    private boolean checkSingleEdit(String word) {
-        // Check if the word is in the Trie
-        if (checkSpelling(word)) {
-            return true;
-        }
-        // Check if the word can be corrected with a transposition
-        for (int i = 0; i < word.length() - 1; i++) {
-            String transposedWord = word.substring(0, i) + word.charAt(i + 1) + word.charAt(i) + word.substring(i + 2);
-            if (checkSpelling(transposedWord)) {
-                return true;
-            }
-        }
-        // Check if the word can be corrected with a deletion, insertion, or
-        // substitution
+    // Recursively searches the trie for suggestions for the given word
+    private boolean search(Node node, String word) {
         for (int i = 0; i < word.length(); i++) {
-            for (char c = 'a'; c <= 'z'; c++) {
-                String editedWord = word.substring(0, i) + c + word.substring(i + 1);
-                if (checkSpelling(editedWord)) {
-                    return true;
+            char c = word.charAt(i);
+            if (!node.child.containsKey(c)) {
+                return false;
+            }
+            node = node.child.get(c);
+        }
+        return node.isWord;
+    }
+
+    // Recursively searches the trie for suggestions for the given word
+    private void search(Node node, String word, List<String> suggestions, String candidate, int distance,
+            Set<String> suggestedWords) {
+        if (distance > MAX_DISTANCE) {
+            return;
+        }
+        if (node.isWord && distance <= MAX_DISTANCE && !suggestedWords.contains(candidate)) {
+            suggestions.add(candidate);
+            suggestedWords.add(candidate); // add the word to the set of suggested words
+        }
+        for (Map.Entry<Character, Node> entry : node.child.entrySet()) {
+            char c = entry.getKey();
+            Node child = entry.getValue();
+            // deletion
+            search(child, word, suggestions, candidate + c, distance + 1, suggestedWords);
+            // substitution
+            search(child, word, suggestions, candidate + c, distance + 1, suggestedWords);
+            // insertion
+            search(child, word, suggestions, candidate + c, distance + 1, suggestedWords);
+            if (word.length() > 1) {
+                // transposition
+                char[] chars = candidate.toCharArray();
+                if (chars.length > 1 && chars[chars.length - 1] == word.charAt(word.length() - 2)
+                        && chars[chars.length - 2] == word.charAt(word.length() - 1)) {
+                    chars[chars.length - 1] = word.charAt(word.length() - 1);
+                    chars[chars.length - 2] = word.charAt(word.length() - 2);
+                    search(child, word, suggestions, new String(chars), distance + 1, suggestedWords);
                 }
             }
-            String editedWord = word.substring(0, i) + word.substring(i + 1);
-            if (checkSpelling(editedWord)) {
-                return true;
+            // matching
+            if (c == word.charAt(0)) {
+                search(child, word.substring(1), suggestions, candidate + c, distance, suggestedWords);
             }
         }
-        return false;
+    }
+
+    public static Set<String> extrapolateWords(Set<String> keywords) {
+        Set<String> result = new HashSet<String>();
+        return result;
+    }
+
+    public static void main(String[] args) {
+        SpellChecker checker = new SpellChecker();
+        List<String> words = Arrays.asList("apple", "banana", "cherry", "dog", "cat", "elephant", "friend", "hello");
+        for (String word : words) {
+            checker.addWord(word);
+        }
+        List<String> inputWords = Arrays.asList("aple", "dgo", "chery", "hlelo");
+        for (String inputWord : inputWords) {
+            List<String> wordSuggestions = checker.suggest(inputWord);
+            if (wordSuggestions.isEmpty()) {
+                continue;
+            } else {
+                System.out.println("Suggestions for " + inputWord + ":");
+                for (String suggestion : wordSuggestions) {
+                    System.out.println("- " + suggestion);
+                }
+                System.out.println();
+            }
+        }
     }
 }

@@ -5,27 +5,33 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-
 // @Author Aishwariya John
-// @Author Pratikraj Rajput
 
 public class PageRanking {
 
     private static int page;
 
-    private static int computeRelevanceScore(File file, List<String> keywords) throws IOException {
-        Document doc = Jsoup.parse(file, "UTF-8");
-        String text = doc.text();
-        int relevance = 0;
-        // Split the text into words and calculate the frequency of each word
-        String[] words = text.split("\\W+");
-        for (String word : words)
-            if (keywords.contains(word.toLowerCase()))
-                relevance++;
-        // System.out.printf("%d %s %d\n", page++, file.getName(), relevance);
-        return relevance;
+    public static void rank(Map<String, Integer> searchResults) {
+        // Create a priority queue to store the top 10 most relevant files
+        PriorityQueue<Map.Entry<String, Integer>> pq = new PriorityQueue<>(
+                Map.Entry.comparingByValue(Comparator.reverseOrder()));
+
+        for (Map.Entry<String, Integer> entry : searchResults.entrySet()) {
+            pq.offer(new AbstractMap.SimpleEntry<>(entry.getKey(), entry.getValue()));
+        }
+
+        page = 1;
+
+        // Print Top 10 Results
+        System.out.println("\nTop 10 Search Results:");
+        int count = 0;
+        while (!pq.isEmpty()) {
+            Map.Entry<String, Integer> entry = pq.poll();
+            System.out.println(page++ + " " + entry.getKey() + ": " + entry.getValue());
+            count++;
+            if (count == 10)
+                break;
+        }
     }
 
     public static void main(String[] args) throws IOException {
@@ -54,8 +60,8 @@ public class PageRanking {
                 // Check if the file is an HTML file
                 if (file.isFile() && (file.getName().endsWith(".html") || file.getName().endsWith(".htm"))) {
                     // Compute the relevance score based on frequency of keywords in the files
-                    int relevanceScore = computeRelevanceScore(file, keywords);
-
+                    // int relevanceScore = computeRelevanceScore(file, keywords);
+                    int relevanceScore = 0;
                     // Add the file and its relevance score to the priority queue
                     if (relevanceScore > 0) {
                         pq.offer(new AbstractMap.SimpleEntry<>(file.getName(), relevanceScore));

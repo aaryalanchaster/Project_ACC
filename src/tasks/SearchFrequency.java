@@ -1,7 +1,5 @@
 package tasks;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.*;
 
 import helper.FrequencyHashMap;
@@ -47,6 +45,6 @@ public class SearchFrequency {
                 node = node.getNext();
             }
         }
-
+        scanner.close();
     }
 }
