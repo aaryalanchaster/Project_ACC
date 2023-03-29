@@ -1,5 +1,5 @@
 
-package Task;
+package tasks;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,7 +8,10 @@ import java.util.*;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-public class Page_Ranking {
+// @Author Aishwariya John
+// @Author Pratikraj Rajput
+
+public class PageRanking {
 
     private static int page;
 

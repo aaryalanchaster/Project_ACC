@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.StringTokenizer;
 
 import org.jsoup.Jsoup;
@@ -32,7 +31,7 @@ public class Parser {
 			// gets the file extension
 			String fileExtension = fileName.substring(fileName.lastIndexOf('.') + 1);
 			System.out.println("Parsing File: " + fileName);
-//	            !fileExtension.equalsIgnoreCase("htm") && 
+			// !fileExtension.equalsIgnoreCase("htm") &&
 			if (!fileExtension.equalsIgnoreCase("html")) {
 
 				// If the file is not of html or htm type, then return without processing
@@ -51,7 +50,8 @@ public class Parser {
 			// closing the file writer
 			writer.close();
 			// Print a success message after the file is converted to txt format
-//	            System.out.println("Successfully converted " + fileName + " to " + txtFileName);
+			// System.out.println("Successfully converted " + fileName + " to " +
+			// txtFileName);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
