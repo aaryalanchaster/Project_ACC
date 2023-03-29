@@ -1,5 +1,12 @@
 package helper;
 
+//Java program to implement
+//the above approach
+import java.io.*;
+import java.util.Scanner;
+
+import Task.SpellChecker;
+
 //Structure of a Trie node
 class TrieNode {
 
@@ -96,22 +103,60 @@ class Trie {
 
 	// Driver Code
 	public static void main(String[] args) {
+        // Create a new instance of SpellChecker
+        SpellChecker spellChecker = new SpellChecker();
 
-		// Given array of strings
-		String str[] = { "gee", "geeks", "ape", "apple", "geeksforgeeks" };
+        // Load the dictionary from a file
+        spellChecker.loadDictionary("dictionary.txt");
 
-		String key = "geek";
+        // Create a scanner to get input from the user
+        Scanner scanner = new Scanner(System.in);
 
-		// Initialize a Trie
-		TrieNode root = new TrieNode();
+        while (true) {
+            // Get a word from the user
+            System.out.print("Enter a word to check (or q to quit): ");
+            String word = scanner.nextLine().trim();
 
-		// Insert strings to trie
-		for (int i = 0; i < str.length; i++) {
-			insertTrie(root, str[i]);
-		}
+            // Exit the program if the user enters "q"
+            if (word.equalsIgnoreCase("q")) {
+                break;
+            }
 
-		if (checkPresent(root, key)) {
-			System.out.println("YES");
-		}
+            // Check if the word is spelled correctly
+            boolean isCorrect = spellChecker.checkSpelling(word);
+
+            if (isCorrect) {
+                System.out.println(word + " is spelled correctly.");
+            } else {
+                System.out.println("Did you mean:");
+
+                // Get suggested corrections for the misspelled word
+                String[] suggestions = spellChecker.getSuggestions(word);
+
+                // Print out the suggested corrections
+                for (String suggestion : suggestions) {
+                    System.out.println("\t" + suggestion);
+                }
+            }
+        }
+//		// Given array of strings
+//		String str[] = { "gee", "geeks", "ape", "apple", "geeksforgeeks" };
+//
+//		String key = "geek";
+//
+//		// Initialize a Trie
+//		TrieNode root = new TrieNode();
+//
+//		// Insert strings to trie
+//		for (int i = 0; i < str.length; i++) {
+//			InsertTrie(root, str[i]);
+//		}
+//
+//		if (checkPresent(root, key)) {
+//			System.out.println("YES");
+//		}
+		
+		
+		
 	}
 }
