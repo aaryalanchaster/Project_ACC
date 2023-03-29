@@ -10,8 +10,6 @@ import java.util.*;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-// @Author Dhrumil
-
 public class InvertedIndex {
     // A TrieNode represents a node in the trie
     static class Node {
@@ -81,6 +79,28 @@ public class InvertedIndex {
         return curr.getFiles();
     }
 
+    // public List<File> search(String word) {
+    // word = word.toLowerCase();
+    // Node curr = root;
+    // for (int i = 0; i < word.length(); i++) {
+    // char c = word.charAt(i);
+    // if (!curr.child.containsKey(c)) {
+    // // Return an empty list if the word is not found in the trie
+    // return Collections.emptyList();
+    // }
+    // curr = curr.child.get(c);
+    // }
+    // // Get the list of files for the current node
+    // List<String> fileNames = curr.getFiles();
+    // List<File> files = new ArrayList<>();
+    // // Convert the list of file names to a list of File objects
+    // for (String fileName : fileNames) {
+    // File file = new File(fileName);
+    // files.add(file);
+    // }
+    // return files;
+    // }
+
     // Returns the number of times the given word occurs in the trie
     public int count(String word) {
         word = word.toLowerCase();
@@ -121,6 +141,10 @@ public class InvertedIndex {
             // gets the file extension
             String fileExtension = fileName.substring(fileName.lastIndexOf('.') + 1);
             if (!fileExtension.equalsIgnoreCase("htm") && !fileExtension.equalsIgnoreCase("html")) {
+                // If the file is not of html or htm type, then return without processing
+                // further and prints the error message
+                // System.out.println("The added files are not html/htm files.Please add files
+                // with proper exttention");
                 return;
             }
             String txtFileName = fileName.substring(0, fileName.lastIndexOf('.')) + ".txt";
