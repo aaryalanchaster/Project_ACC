@@ -1,9 +1,5 @@
 package helper;
 
-//Java program to implement
-//the above approach
-import java.io.*;
-
 //Structure of a Trie node
 class TrieNode {
 
@@ -26,8 +22,8 @@ class TrieNode {
 
 class Trie {
 
-//Function to insert a string into Trie
-	static void InsertTrie(TrieNode root, String s) {
+	// Function to insert a string into Trie
+	static void insertTrie(TrieNode root, String s) {
 		TrieNode temp = root;
 
 		// Traverse the string, s
@@ -47,7 +43,7 @@ class Trie {
 		temp.isEnd = true;
 	}
 
-//Function to print suggestions of the string
+	// Function to print suggestions of the string
 	static void printSuggestions(TrieNode root, String res) {
 
 		// If current character is
@@ -73,8 +69,8 @@ class Trie {
 		}
 	}
 
-//Function to check if the string
-//is present in Trie or not
+	// Function to check if the string
+	// is present in Trie or not
 	static boolean checkPresent(TrieNode root, String key) {
 
 		// Traverse the string
@@ -98,7 +94,7 @@ class Trie {
 		return false;
 	}
 
-//Driver Code
+	// Driver Code
 	public static void main(String[] args) {
 
 		// Given array of strings
@@ -111,7 +107,7 @@ class Trie {
 
 		// Insert strings to trie
 		for (int i = 0; i < str.length; i++) {
-			InsertTrie(root, str[i]);
+			insertTrie(root, str[i]);
 		}
 
 		if (checkPresent(root, key)) {
