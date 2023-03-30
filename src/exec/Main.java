@@ -43,7 +43,6 @@ public class Main {
                     Set<String> keywords = new HashSet<String>();
                     for (String word : queryTokens)
                         keywords.add(word.toLowerCase().trim());
-                    System.out.println("[INFO] KEYWORDS " + keywords);
 
                     System.out.println("[INFO] Building Inverted Index...");
                     Set<File> lookup = InvertedIndex.generateInvertedIndex(keywords);
