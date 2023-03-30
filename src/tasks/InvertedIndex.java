@@ -55,7 +55,7 @@ import java.util.*;
 
 public class InvertedIndex {
 
-    private int page = 1;
+    // private int page = 1;
     // Define a static map to store the index for each word
     private static Map<String, Set<String>> index;
     // Define a set to store all the files in the folder

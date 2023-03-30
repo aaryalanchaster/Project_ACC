@@ -15,8 +15,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 public class Parser {
-	private static final String htmlFilesDirectory = "C:\\Users\\Mauli\\ACC Project\\Project_ACC\\Webpages_project\\Webpages_project";
-	private static final String textFilesDirectory = "C:\\Users\\Mauli\\ACC Project\\Project_ACC\\Text";
+	private static final String htmlFilesDirectory = "C:\\Java\\Project_ACC\\Webpages_project\\Webpages_project";
+	private static final String textFilesDirectory = "C:\\Java\\Project_ACC\\Text";
 	final static ArrayList<String> filterWords = new ArrayList<>(Arrays.asList("THE", "FOR", "AND", "HAS", "THAT", "IN",
 			"A", "AN", "HE", "SHE", "IT", "HAVE", "COULD", "WOULD",
 			"THIS", "ARE", "WHICH", "HOW", "CAN", "THEN", "THAN", "WHEN", "ITS", "FROM", "WITH", "WILL", "NOT"));
@@ -77,9 +77,9 @@ public class Parser {
 		}
 	}
 
-	public static HashMap<String, Integer> getWordsWithFrequency(String path) {
+	public static HashMap<String, Integer> getWordsWithFrequency() {
 
-		File directory = new File(path);
+		File directory = new File(textFilesDirectory);
 		HashMap<String, Integer> map = new HashMap<String, Integer>();
 		File[] htmlFiles = directory.listFiles(new FilenameFilter() {
 			@Override
@@ -113,7 +113,7 @@ public class Parser {
 						// it's not a number (required ALPHAnumeric),
 						// it's between length [3,16]
 						// it's not one of the filter words (common English words)
-						if (extract.matches("^(?![0-9]*$)(?=.{3,16}$)[A-Za-z0-9]+$")
+						if (extract.matches("(?=.{3,16}$)[A-Za-z]+$")
 								&& !filterWords.contains(extract)) {
 							// adding words into map
 							// checking if the map already contains the word
@@ -176,7 +176,7 @@ public class Parser {
 						// it's not a number (required ALPHAnumeric),
 						// it's between length [3,16]
 						// it's not one of the filter words (common English words)
-						if (extract.matches("^(?![0-9]*$)(?=.{3,16}$)[A-Za-z0-9]+$")
+						if (extract.matches("(?=.{3,16}$)[A-Za-z]+$")
 								&& !filterWords.contains(extract)) {
 
 							if (!arr.contains(extract)) {
