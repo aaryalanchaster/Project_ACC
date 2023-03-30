@@ -11,6 +11,8 @@ import org.jsoup.nodes.Document;
 
 public class RelevanceFrequency {
 
+    // static int page = 1;
+
     private static int computeRelevanceScore(File file, Set<String> keywords) throws IOException {
         Document doc = Jsoup.parse(file, "UTF-8");
         String text = doc.text();

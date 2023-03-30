@@ -1,7 +1,6 @@
 package tasks;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -123,7 +122,12 @@ public class SpellChecker {
         for (String keyword : keywords) {
             List<String> lst = suggest(keyword);
             // System.out.println(keyword + lst);
+            Map<String, List<String>> wc = WordCompletion.sendWordCompletion(keyword);
+            List<String> wclst = wc.get(keyword);
             result.addAll(lst);
+            if (wclst != null)
+
+                result.addAll(wclst);
 
         }
         // System.out.println(result);

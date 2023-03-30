@@ -5,7 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-// @Author Aishwariya John
+// @Author Aishwarya John
 
 public class PageRanking {
 
@@ -24,9 +24,9 @@ public class PageRanking {
 
         // Print Top 10 Results
         System.out.println("\nTop 10 Search Results:");
-        int count = 0;
-        while (!pq.isEmpty()) {
-            Map.Entry<String, Integer> entry = pq.poll();
+        int count = 0;// initialize count to 0
+        while (!pq.isEmpty()) { // search if the queue is empty
+            Map.Entry<String, Integer> entry = pq.poll(); // remove the head of the queue
             System.out.println(page++ + " " + entry.getKey() + ": " + entry.getValue());
             count++;
             if (count == 10)
@@ -38,21 +38,21 @@ public class PageRanking {
         // Set the path of the folder containing the txt files to be indexed
         // String folderPath =
         // "C:\\Users\\johna\\Downloads\\Webpages_project\\Webpages_project";
-        String folderPath = "C:\\Java\\Project_ACC\\Webpages_project\\Webpages_project";
+        String folderPath = "C:\\Java\\Project_ACC\\Webpages_project\\Webpages_project";// folder path
 
         try (Scanner scanner = new Scanner(System.in)) {
-            System.out.print("Enter keywords to search for (comma separated): ");
+            System.out.print("Enter keywords to search for (comma separated): ");// take keyword as input from user
             String[] searchwords = scanner.nextLine().split(",");
-            List<String> keywords = new ArrayList<String>();
+            List<String> keywords = new ArrayList<String>();// create arraylist to store keywords
             for (String word : searchwords)
-                keywords.add(word.toLowerCase().trim());
+                keywords.add(word.toLowerCase().trim());// add keywords in lowercase to the arraylist
 
             // File folder = new File(folderPath);
             // takes all the files and adds them in the files array
             File[] files = new File(folderPath).listFiles();
             // Create a priority queue to store the top 10 most relevant files
             PriorityQueue<Map.Entry<String, Integer>> pq = new PriorityQueue<>(
-                    Map.Entry.comparingByValue(Comparator.reverseOrder()));
+                    Map.Entry.comparingByValue(Comparator.reverseOrder()));// call the comparator
 
             // For each file, read its content and calculate its relevance score
             System.out.println("[INFO] Searching...\n");
@@ -60,26 +60,17 @@ public class PageRanking {
                 // Check if the file is an HTML file
                 if (file.isFile() && (file.getName().endsWith(".html") || file.getName().endsWith(".htm"))) {
                     // Compute the relevance score based on frequency of keywords in the files
-                    // int relevanceScore = computeRelevanceScore(file, keywords);
+
                     int relevanceScore = 0;
-                    // Add the file and its relevance score to the priority queue
+
                     if (relevanceScore > 0) {
-                        pq.offer(new AbstractMap.SimpleEntry<>(file.getName(), relevanceScore));
+                        pq.offer(new AbstractMap.SimpleEntry<>(file.getName(), relevanceScore));// add filename with the
+                                                                                                // score into the
+                                                                                                // priority queue
                     }
                 }
             }
 
-            // Print the top 10 most relevant files
-            page = 1;
-            System.out.println("\n\nTop 10 Search Results:\n");
-            int count = 0;
-            while (!pq.isEmpty()) {
-                Map.Entry<String, Integer> entry = pq.poll();
-                System.out.println(page++ + " " + entry.getKey() + ": " + entry.getValue());
-                count++;
-                if (count == 10)
-                    break;
-            }
         }
     }
 }

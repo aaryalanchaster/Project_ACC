@@ -5,11 +5,12 @@ public class TrieNode {
     public TrieNode[] children;
     // A boolean flag to indicate whether the node represents the end of a word
     public boolean isEndOfWord;
+    private static final char[] CHARACTERS = "abcdefghijklmnopqrstuvwxyz".toCharArray(); // Array of characters
 
     // Constructor to initialize the TrieNode with an empty children array and
     // isEndOfWord set to false
     public TrieNode() {
-        this.children = new TrieNode[26];
+        this.children = new TrieNode[CHARACTERS.length];
         this.isEndOfWord = false;
     }
 
@@ -20,10 +21,17 @@ public class TrieNode {
         // necessary
         for (int i = 0; i < word.length(); i++) {
             char c = word.charAt(i);
-            int index = c - 'a'; // Determine the index in the children array based on the character
+            int index = c - 'a'; // Determine the index in the children array based on the character's Unicode
+                                 // value
+            // System.out.println("c= " +c);
+            if (index < 0 || index >= currentNode.children.length) {
+                // Handle invalid index values
+                throw new IllegalArgumentException("Invalid index value: " + index);
+            }
             if (currentNode.children[index] == null) {
                 currentNode.children[index] = new TrieNode();
             }
+
             // Move to the next node in the Trie
             currentNode = currentNode.children[index];
         }

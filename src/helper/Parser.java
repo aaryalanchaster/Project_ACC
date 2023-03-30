@@ -109,10 +109,6 @@ public class Parser {
 						// the words are converted to uppercase
 						extract = extract.toUpperCase();
 
-						// Insert the word into the HashMap if and only if,
-						// it's not a number (required ALPHAnumeric),
-						// it's between length [3,16]
-						// it's not one of the filter words (common English words)
 						if (extract.matches("(?=.{3,16}$)[A-Za-z]+$")
 								&& !filterWords.contains(extract)) {
 							// adding words into map
@@ -172,10 +168,6 @@ public class Parser {
 						// the words are converted to uppercase
 						extract = extract.toUpperCase();
 
-						// Insert the word into the HashMap if and only if,
-						// it's not a number (required ALPHAnumeric),
-						// it's between length [3,16]
-						// it's not one of the filter words (common English words)
 						if (extract.matches("(?=.{3,16}$)[A-Za-z]+$")
 								&& !filterWords.contains(extract)) {
 
@@ -199,6 +191,7 @@ public class Parser {
 
 	}
 
+	// filters out the filterwords and creates a set
 	public static Set<String> filterStopWords(String query) {
 		String[] words = query.split(" ");
 		Set<String> keywords = new HashSet<String>();
